@@ -1,0 +1,13 @@
+{
+  "/api/v1/apps": {
+    "target": "http://192.168.20.94:3032",
+    "docs": "",
+    "description": "DUMMY",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/v1/apps": ""
+    },
+    "changeOrigin": true
+  }
+}

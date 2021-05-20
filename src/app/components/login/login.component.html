@@ -1,0 +1,59 @@
+<div class="container">
+  <div class="form-panel">
+    <button (click)="handleShowLogin()">Login</button>
+    <button (click)="handleShowRegister()">Register</button>
+  </div>
+  <div class="form-login">
+    <form *ngIf="showLogin" (ngSubmit)="handleLoginSubmit()">
+      <input
+        type="text"
+        name="account_username"
+        [(ngModel)]="account_username"
+        placeholder="Username"
+      />
+      <input
+        type="password"
+        name="account_password"
+        [(ngModel)]="account_password"
+        placeholder="Password"
+      />
+      <button type="submit">Login Now</button>
+    </form>
+  </div>
+  <div class="form-registration">
+    <form *ngIf="showRegister" (ngSubmit)="handleRegisterSubmit()">
+      <input
+        type="email"
+        name="account_email"
+        [(ngModel)]="account_email"
+        placeholder="Email"
+      />
+      <input
+        type="text"
+        name="account_fullname"
+        [(ngModel)]="account_fullname"
+        placeholder="Fullname"
+      />
+      <input
+        type="text"
+        name="account_username"
+        [(ngModel)]="account_username"
+        placeholder="Username"
+      />
+      <input
+        type="password"
+        name="account_password"
+        [(ngModel)]="account_password"
+        placeholder="Password"
+      />
+      <input type="text" name="role" [(ngModel)]="role" placeholder="Role" />
+      <input
+        type="number"
+        name="workspace"
+        [(ngModel)]="workspace"
+        placeholder="Select a number"
+      />
+      <button type="submit">Register Now</button>
+    </form>
+  </div>
+</div>
