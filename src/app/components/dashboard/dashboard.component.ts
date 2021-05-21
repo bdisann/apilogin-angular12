@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { webSocket } from 'rxjs/webSocket';
 
@@ -7,9 +7,10 @@ import { webSocket } from 'rxjs/webSocket';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   dataAccount: any;
   dataAccountName: string = '';
+  dataGraph: any = [];
   socketMessage: Object = {
     message: 'graph',
     access_token:
@@ -36,6 +37,7 @@ export class DashboardComponent implements OnInit {
 
   handleSocket() {
     this.ws.next(this.socketMessage);
-    this.ws.subscribe((res) => console.log(res));
+    // this.ws.pipe(map((res) => console.log('TEST MAP', res)));
+    this.ws.subscribe((res) => {});
   }
 }

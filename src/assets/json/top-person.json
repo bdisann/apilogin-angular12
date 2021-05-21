@@ -1,0 +1,81 @@
+{
+  "message": "success",
+  "status": true,
+  "data": {
+    "nodes": [
+      {
+        "id": 0,
+        "data": {
+          "type": "country",
+          "name": "USA",
+          "population": 325365189,
+          "currency": "USD"
+        },
+        "attributes": { "x": 0.1414247453212738, "y": 36.075706481933594 }
+      },
+      {
+        "id": 1,
+        "data": {
+          "type": "country",
+          "name": "France",
+          "population": 66991000,
+          "currency": "EUR"
+        },
+        "attributes": { "x": -13.736449241638184, "y": -31.714202880859375 }
+      },
+      {
+        "id": 2,
+        "data": {
+          "type": "country",
+          "name": "Germany",
+          "population": 82175700,
+          "currency": "EUR"
+        },
+        "attributes": { "x": 26.934364318847656, "y": -31.93191909790039 }
+      },
+      {
+        "id": 3,
+        "data": { "type": "person", "name": "Norwood Preston", "age": 44 },
+        "attributes": { "x": 6.068506240844727, "y": 6.21354866027832 }
+      },
+      {
+        "id": 4,
+        "data": { "type": "person", "name": "Kurtis Levi", "age": 24 },
+        "attributes": { "x": 29.330284118652344, "y": 22.172880172729492 }
+      },
+      {
+        "id": 5,
+        "data": { "type": "person", "name": "Amias Kev", "age": 38 },
+        "attributes": { "x": -24.19040298461914, "y": 35.77732849121094 }
+      },
+      {
+        "id": 6,
+        "data": { "type": "person", "name": "Carver Derren", "age": 16 },
+        "attributes": { "x": -34.62548065185547, "y": -22.868541717529297 }
+      },
+      {
+        "id": 7,
+        "data": { "type": "person", "name": "Bevis Tel", "age": 73 },
+        "attributes": { "x": -22.90767478942871, "y": -4.446183681488037 }
+      },
+      {
+        "id": 8,
+        "data": { "type": "person", "name": "Loyd Garfield", "age": 32 },
+        "attributes": { "x": 32.98543167114258, "y": -9.278616905212402 }
+      }
+    ],
+    "edges": [
+      { "id": 0, "source": 3, "target": 0, "data": { "type": "lives_in" } },
+      { "id": 1, "source": 4, "target": 0, "data": { "type": "lives_in" } },
+      { "id": 2, "source": 5, "target": 0, "data": { "type": "lives_in" } },
+      { "id": 3, "source": 6, "target": 1, "data": { "type": "lives_in" } },
+      { "id": 4, "source": 7, "target": 1, "data": { "type": "lives_in" } },
+      { "id": 5, "source": 8, "target": 2, "data": { "type": "lives_in" } },
+      { "id": 6, "source": 3, "target": 4, "data": { "type": "knows" } },
+      { "id": 7, "source": 3, "target": 8, "data": { "type": "knows" } },
+      { "id": 8, "source": 3, "target": 7, "data": { "type": "knows" } },
+      { "id": 9, "source": 4, "target": 8, "data": { "type": "knows" } },
+      { "id": 10, "source": 6, "target": 7, "data": { "type": "knows" } }
+    ]
+  }
+}

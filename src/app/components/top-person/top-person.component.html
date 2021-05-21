@@ -1,0 +1,12 @@
+<div class="w-full">
+	<div id="container-ogma" style="height: 90vh">
+		<ng-container *ngIf="ontology; else loading"></ng-container>
+	</div>
+
+	<!-- loading -->
+	<ng-template #loading>
+		<div class="not-available">
+				<div class="lds-facebook"><div></div><div></div><div></div></div>
+			</div>
+	</ng-template>
+</div>

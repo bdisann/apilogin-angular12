@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "id": "5dfaf7d0c2c1a93b0d730847",
+    "name": "ERICK THOHIR",
+    "description": "PEMANTAUAN ERICK THOHIR",
+    "language": "id,en",
+    "keyword": "\"erick thohir\"",
+    "shared": [],
+    "workspace_id": "",
+    "user_id": "5a0526fbf7ab67832df30fd6",
+    "user": null,
+    "keyword_tag": "erick thohir",
+    "filter_location": [],
+    "filter_media_tag": [],
+    "not_media_tags": [],
+    "created_at": "2019-12-19T04:08:48.954+0000",
+    "updated_at": "2019-12-19T04:08:48.955+0000"
+  }
+}
