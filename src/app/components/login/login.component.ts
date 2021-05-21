@@ -16,7 +16,6 @@ export class LoginComponent implements OnInit {
   account_fullname: string;
   role: string;
   workspace: number;
-
   accountData: any;
 
   constructor(private account: AccountService, private route: Router) {}
