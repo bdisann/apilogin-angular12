@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { webSocket } from 'rxjs/webSocket';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +18,7 @@ export class DashboardComponent implements OnInit {
     delay: '1',
     size: '100',
   };
+  private ws = webSocket('ws://192.168.20.85:9011/graph-batch');
   constructor(private route: Router) {}
 
   ngOnInit(): void {
@@ -31,9 +31,10 @@ export class DashboardComponent implements OnInit {
   }
 
   handleSocket() {
-    const ws = webSocket('ws://192.168.20.85:9011/graph-batch');
-    ws.next(this.socketMessage);
-    ws.subscribe();
-    ws.complete();
+    this.ws.next(this.socketMessage);
+    this.ws.subscribe();
+  }
+  ngOnDestroy(): void {
+    this.ws.complete();
   }
 }
