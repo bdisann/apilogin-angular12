@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { webSocket } from 'rxjs/webSocket';
 
@@ -25,6 +25,10 @@ export class DashboardComponent implements OnInit {
     this.dataAccount = JSON.parse(window.localStorage.getItem('account'));
   }
 
+  ngOnDestroy(): void {
+    this.ws.complete();
+  }
+
   handleLogout() {
     window.localStorage.clear();
     this.route.navigate(['/']);
@@ -32,9 +36,6 @@ export class DashboardComponent implements OnInit {
 
   handleSocket() {
     this.ws.next(this.socketMessage);
-    this.ws.subscribe();
-  }
-  ngOnDestroy(): void {
-    this.ws.complete();
+    this.ws.subscribe((res) => console.log(res));
   }
 }
