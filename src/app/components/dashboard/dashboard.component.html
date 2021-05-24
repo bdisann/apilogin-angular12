@@ -2,7 +2,6 @@
   <h1>Halo {{ dataAccount.account_fullname }}</h1>
   <div class="button">
     <button (click)="handleLogout()">Logout</button>
-    <button (click)="handleSocket()">Send Data Socket</button>
+    <app-top-person></app-top-person>
   </div>
-  <app-top-person [ontology]="dataGraph"></app-top-person>
 </div>

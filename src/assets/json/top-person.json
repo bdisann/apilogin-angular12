@@ -75,7 +75,11 @@
       { "id": 7, "source": 3, "target": 8, "data": { "type": "knows" } },
       { "id": 8, "source": 3, "target": 7, "data": { "type": "knows" } },
       { "id": 9, "source": 4, "target": 8, "data": { "type": "knows" } },
-      { "id": 10, "source": 6, "target": 7, "data": { "type": "knows" } }
+      { "id": 10, "source": 6, "target": 1, "data": { "type": "knows" } },
+      { "id": 11, "source": 7, "target": 8, "data": { "type": "knows" } },
+      { "id": 12, "source": 8, "target": 0, "data": { "type": "lives_in" } },
+      { "id": 13, "source": 0, "target": 8, "data": { "type": "knows" } },
+      { "id": 14, "source": 2, "target": 5, "data": { "type": "knows" } }
     ]
   }
 }

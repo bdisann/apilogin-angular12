@@ -1,3 +1,8 @@
+#container-ogma {
+  height: 80vh;
+  width: 1100px;
+}
+
 .top-left {
   position: absolute;
   left: 10px;
@@ -5,7 +10,7 @@
   z-index: 100;
 }
 
-.not-available{
+.not-available {
   position: absolute;
   z-index: 10;
   top: 0;
@@ -27,7 +32,9 @@
     display: flex;
   }
 
-  .item-red, .item-green, .item-blue {
+  .item-red,
+  .item-green,
+  .item-blue {
     width: 30px;
     height: 20px;
     margin-right: 5px;
@@ -78,7 +85,8 @@
     top: 8px;
     height: 64px;
   }
-  50%, 100% {
+  50%,
+  100% {
     top: 24px;
     height: 32px;
   }

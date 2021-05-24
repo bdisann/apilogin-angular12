@@ -1,8 +1,9 @@
-import { Input, Component, OnInit, OnDestroy, OnChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
+import { map } from 'rxjs/operators';
+import { WsService } from 'src/app/services/ws.service';
 declare const Ogma: any;
 
 @Component({
@@ -10,20 +11,39 @@ declare const Ogma: any;
   templateUrl: './top-person.component.html',
   styleUrls: ['./top-person.component.scss'],
 })
-export class TopPersonComponent implements OnInit, OnDestroy, OnChanges {
+export class TopPersonComponent implements OnInit, OnDestroy {
   public ogma: any;
-  @Input() public ontology: any;
-
+  public ontology: any;
+  private oldOntology: any;
+  private socketMessage: Object = {
+    message: 'graph',
+    access_token:
+      '86120884ae4b272458ab430724f32da238a6256c7f5b772b0989f885a9e483dc',
+    workspace: 'topic-overall',
+    delay: '1',
+    size: '100',
+  };
   private fetchSubscription: Subscription;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private wsocket: WsService) {}
 
   ngOnInit() {
+    this.wsocket.setDataGraph(this.socketMessage);
+    this.wsocket.getDataGraph().subscribe((res) => {
+      if (res['status'] === 'graph') {
+        this.renderOntology(res);
+      }
+    });
     this.graphInit();
     this.getOntology();
   }
 
-  ngOnChanges(): void {}
+  ngDoCheck() {
+    if (this.oldOntology !== this.ontology) {
+      console.log(this.ontology);
+      this.oldOntology = this.ontology;
+    }
+  }
 
   getOntology() {
     this.ogma.clearGraph();
@@ -47,8 +67,9 @@ export class TopPersonComponent implements OnInit, OnDestroy, OnChanges {
       options: {
         fpsLimit: 100,
         edgesAlwaysCurvy: false,
-        directedEdges: false,
-        backgroundColor: 'transparent',
+        directedEdges: true,
+        backgroundColor: 'black',
+        gravity: 0.01,
         texts: {
           preventOverlap: false,
         },
@@ -93,6 +114,7 @@ export class TopPersonComponent implements OnInit, OnDestroy, OnChanges {
           content: function (node) {
             return node.getData('name');
           },
+          color: 'white',
           margin: 0,
           // size: 10,
           scaling: true,

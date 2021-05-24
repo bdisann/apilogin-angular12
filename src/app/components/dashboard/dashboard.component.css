@@ -23,3 +23,8 @@ button {
   cursor: pointer;
   margin: 5px;
 }
+
+app-top-person {
+  width: 500px;
+  height: 500px;
+}

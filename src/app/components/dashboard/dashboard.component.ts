@@ -1,33 +1,38 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { webSocket } from 'rxjs/webSocket';
+import { AccountService } from 'src/app/services/account.service';
+import { WsService } from 'src/app/services/ws.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, OnChanges {
   dataAccount: any;
   dataAccountName: string = '';
   dataGraph: any = [];
-  socketMessage: Object = {
-    message: 'graph',
-    access_token:
-      '86120884ae4b272458ab430724f32da238a6256c7f5b772b0989f885a9e483dc',
-    workspace: 'topic-overall',
-    delay: '1',
-    size: '100',
-  };
-  private ws = webSocket('ws://192.168.20.85:9011/graph-batch');
-  constructor(private route: Router) {}
+
+  constructor(private route: Router, as: AccountService, wSc: WsService) {
+    if (!window.localStorage.getItem('account')) route.navigate(['login']);
+  }
 
   ngOnInit(): void {
     this.dataAccount = JSON.parse(window.localStorage.getItem('account'));
   }
 
-  ngOnDestroy(): void {
-    this.ws.complete();
+  ngOnDestroy(): void {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.dataGraph.previousValue !== changes.dataGraph.currentValue) {
+      console.log(this.dataGraph.curruentValue);
+    }
   }
 
   handleLogout() {
@@ -35,9 +40,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.route.navigate(['/']);
   }
 
-  handleSocket() {
-    this.ws.next(this.socketMessage);
-    // this.ws.pipe(map((res) => console.log('TEST MAP', res)));
-    this.ws.subscribe((res) => {});
-  }
+  handleSocket() {}
 }
