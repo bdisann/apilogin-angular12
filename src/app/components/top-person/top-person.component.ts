@@ -210,6 +210,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.fetchSubscription) this.fetchSubscription.unsubscribe();
+    this.wsocket.stopWebSocket();
   }
 }
 
