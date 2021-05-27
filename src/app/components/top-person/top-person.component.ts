@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, DoCheck, Input } from '@angular/core';
-import { Subscription, interval } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subscription, interval, concat } from 'rxjs';
+import { map, reduce } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { WsService } from 'src/app/services/ws.service';
 declare const Ogma: any;
@@ -12,8 +12,18 @@ declare const Ogma: any;
 })
 export class TopPersonComponent implements OnInit, OnDestroy {
   public ogma: any;
-  public ontology: any;
-  private oldOntology: any;
+  public ontology: any[] = [];
+  type: string;
+  name: string;
+  population: string;
+  currency: string;
+  popUp: boolean = false;
+  clientX: any;
+  clientY: any;
+  search: string;
+  nameUrl: string;
+  usernames: string[] = [];
+  isCountry: boolean;
   @Input() zoom;
   private socketMessage: Object = {
     message: 'graph',
@@ -34,10 +44,11 @@ export class TopPersonComponent implements OnInit, OnDestroy {
     this.wsocket.getDataGraph().subscribe((res) => {
       if (res['status'] === 'graph') {
         if (!!(res['nodes'].length > 0 && res['edges'].length > 0)) {
-          this.ontology = res;
+          this.ontology = this.ontology.concat(res['nodes']);
           this.renderOntology(res);
         }
-        // console.log('From Subscribe', res);
+      } else if (res['status'] === 'list_id') {
+        this.usernames = this.usernames.concat(res['list_id']);
       }
     });
   }
@@ -49,7 +60,9 @@ export class TopPersonComponent implements OnInit, OnDestroy {
       .pipe(map((res) => res['data']))
       .subscribe((res) => {
         if (res['nodes'].length > 0 && res['edges'].length > 0) {
-          this.ontology = res;
+          this.ontology = this.ontology.concat(res);
+          console.log(res);
+          this.usernames = this.usernames.concat(res['nodes']['data']);
           this.renderOntology(res);
         } else {
           this.ontology = null;
@@ -77,14 +90,41 @@ export class TopPersonComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.ogma.events.onNodesSelected((event) => {
-      console.log(event['nodes'].getData('name')[0]);
+    this.ogma.events.onClick((e) => {
+      if (!e.target) return;
+      const data = e.target;
+      if (data.isNode) {
+        this.popUp = true;
+      } else {
+        return;
+      }
+      this.clientX = e.domEvent.clientX;
+      this.clientY = e.domEvent.clientY;
+      this.type = data.getData('type');
+      this.name = data.getData('username');
+      this.nameUrl = this.name
+        .split('')
+        .filter((e) => e !== '@')
+        .join('');
+      // if (this.type === 'country') {
+      //   this.isCountry = true;
+      //   this.population = data.getData('population');
+      //   this.currency = data.getData('currency');
+      // } else {
+      //   this.isCountry = false;
+      //   this.population = '';
+      //   this.currency = '';
+      // }
     });
+
+    // this.ogma.events.onNodesSelected((event) => {
+    //   console.log(event['nodes'].getData('name')[0]);
+    // });
 
     this.ogma.events.onHover((event) => {
       if (!event.target) return;
       if (!event.target.isNode) return;
-      console.log(event.target.getData('name'));
+      // console.log(event.target.getData('name'));
       this.ogma.styles.setHoveredNodeAttributes({
         outline: true,
         outerStroke: {
@@ -115,16 +155,16 @@ export class TopPersonComponent implements OnInit, OnDestroy {
 
     this.ogma.styles.addRule({
       nodeAttributes: {
-        text: (node) => node.getAttributes()['text'],
-        // text: {
-        //   content: (node) => node.getData('name'),
-        //   color: (node) =>
-        //     node.getData('type') === 'country' ? 'yellow' : 'white',
-        //   scaling: true,
-        //   scale: 1.5,
-        //   minVisibleSize: 0,
-        //   backgroundColor: 'transparent',
-        // },
+        // text: (node) => node.getAttributes()['text'],
+        text: {
+          content: (node) => node.getData('name'),
+          color: (node) =>
+            node.getData('type') === 'country' ? 'yellow' : 'white',
+          scaling: true,
+          scale: 1.5,
+          minVisibleSize: 0,
+          backgroundColor: 'transparent',
+        },
       },
     });
   }
@@ -163,6 +203,44 @@ export class TopPersonComponent implements OnInit, OnDestroy {
 
   handleRotateRight() {
     this.ogma.view.rotate(-1.5, { easing: 'linear', duration: 1000 });
+  }
+
+  handleSearch(e) {
+    e.preventDefault();
+    let dataExist: any;
+    const checkDataExist = this.ontology.find(
+      (res) => res.data.username === this.search
+    );
+    if (checkDataExist) {
+      dataExist = this.ontology.filter(
+        (res) => res.data.username === this.search
+      )[0];
+    }
+    this.ogma.view.setCenter(
+      {
+        x: dataExist['attributes']['x'],
+        y: dataExist['attributes']['y'],
+      },
+      { duration: 1000 }
+    );
+    // console.log(dataExist);
+    const getNode = this.ogma.getNode(dataExist['id']);
+
+    getNode.pulse({
+      duration: 5000,
+      interval: 1,
+      startColor: 'green',
+      endColor: 'red',
+      startRatio: 1,
+      endRatio: 6,
+      width: 10,
+    });
+
+    this.ogma.view.setZoom(5);
+  }
+
+  detailToogle() {
+    return (this.popUp = !this.popUp);
   }
 
   ngOnDestroy() {

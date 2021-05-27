@@ -1,7 +1,36 @@
+<style>
+  .popup-data {
+    position: absolute;
+    z-index: 99;
+    height: 200px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 15px;
+    /* filter: blur(8px); */
+    background-color: rgba(240, 248, 255, 0.956);
+  }
+</style>
+
 <button (click)="handleZoomOut()">Zoom Out</button>
 <button (click)="handleZoomIn()">Zoom In</button>
 <button (click)="handleRotateLeft()">Rotate Left</button>
 <button (click)="handleRotateRight()">Rotate Right</button>
+<input
+  placeholder="Search Username.."
+  class="search"
+  type="text"
+  list="usernamelist"
+  [(ngModel)]="search"
+/>
+<button (click)="handleSearch($event)">Search Now</button>
+<datalist id="usernamelist">
+  <option value="{{ username['username'] }}" *ngFor="let username of usernames">
+    {{ username["username"] }}
+  </option>
+</datalist>
+
 <input
   (change)="handleZoomChange()"
   type="range"
@@ -25,4 +54,22 @@
       </div>
     </div>
   </ng-template>
+</div>
+
+<div
+  [ngStyle]="{ top: clientY + -200 + 'px', left: clientX + 20 + 'px' }"
+  class="popup-data"
+  *ngIf="popUp"
+>
+  <h1>Data Detail</h1>
+  <!-- <h4>Type: {{ type }}</h4> -->
+
+  <h4>
+    username:
+    <a target="_blank" href="https://twitter.com/{{ nameUrl }}">{{ name }}</a>
+  </h4>
+  <!-- <h4 *ngIf="isCountry">Population: {{ population }}</h4>
+  <h4 *ngIf="isCountry">Currency: {{ currency }}</h4> -->
+
+  <button (click)="detailToogle()">close</button>
 </div>
