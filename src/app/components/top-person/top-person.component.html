@@ -1,12 +1,28 @@
+<button (click)="handleZoomOut()">Zoom Out</button>
+<button (click)="handleZoomIn()">Zoom In</button>
+<button (click)="handleRotateLeft()">Rotate Left</button>
+<button (click)="handleRotateRight()">Rotate Right</button>
+<input
+  (change)="handleZoomChange()"
+  type="range"
+  min="0"
+  max="5"
+  defaultValue="0"
+  [(ngModel)]="zoom"
+/>
 <div class="w-full">
-	<div id="container-ogma" style="height: 90vh">
-		<ng-container *ngIf="ontology; else loading"></ng-container>
-	</div>
+  <div id="container-ogma" style="height: 90vh">
+    <ng-container *ngIf="ontology; else loading"></ng-container>
+  </div>
 
-	<!-- loading -->
-	<ng-template #loading>
-		<div class="not-available">
-				<div class="lds-facebook"><div></div><div></div><div></div></div>
-			</div>
-	</ng-template>
+  <!-- loading -->
+  <ng-template #loading>
+    <div class="not-available">
+      <div class="lds-facebook">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
 </div>

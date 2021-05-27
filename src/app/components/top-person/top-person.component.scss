@@ -53,6 +53,39 @@
   }
 }
 
+button {
+  padding: 10px 25px;
+  border: none;
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  padding: 7px 24px;
+}
+
+input {
+  appearance: none;
+  line-height: 20px;
+  background-color: black;
+  height: 20px;
+  width: 200px;
+  margin-left: 10px;
+}
+
+input::-webkit-slider-thumb {
+  appearance: none;
+  background-color: red;
+  height: 35px;
+  width: 35px;
+  border-radius: 99px;
+  position: relative;
+}
+
 /* loading */
 .lds-facebook {
   display: inline-block;

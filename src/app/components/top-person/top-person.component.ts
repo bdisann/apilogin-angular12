@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-
+import { Component, OnInit, OnDestroy, DoCheck, Input } from '@angular/core';
+import { Subscription, interval } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { WsService } from 'src/app/services/ws.service';
 declare const Ogma: any;
 
@@ -15,6 +14,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
   public ogma: any;
   public ontology: any;
   private oldOntology: any;
+  @Input() zoom;
   private socketMessage: Object = {
     message: 'graph',
     access_token:
@@ -28,21 +28,18 @@ export class TopPersonComponent implements OnInit, OnDestroy {
   constructor(private http: HttpClient, private wsocket: WsService) {}
 
   ngOnInit() {
+    this.graphInit();
+    // this.getOntology(); // for dummy data
     this.wsocket.setDataGraph(this.socketMessage);
     this.wsocket.getDataGraph().subscribe((res) => {
       if (res['status'] === 'graph') {
-        this.renderOntology(res);
+        if (!!(res['nodes'].length > 0 && res['edges'].length > 0)) {
+          this.ontology = res;
+          this.renderOntology(res);
+        }
+        // console.log('From Subscribe', res);
       }
     });
-    this.graphInit();
-    this.getOntology();
-  }
-
-  ngDoCheck() {
-    if (this.oldOntology !== this.ontology) {
-      console.log(this.ontology);
-      this.oldOntology = this.ontology;
-    }
   }
 
   getOntology() {
@@ -53,7 +50,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
       .subscribe((res) => {
         if (res['nodes'].length > 0 && res['edges'].length > 0) {
           this.ontology = res;
-          this.renderOntology(this.ontology);
+          this.renderOntology(res);
         } else {
           this.ontology = null;
         }
@@ -66,150 +63,111 @@ export class TopPersonComponent implements OnInit, OnDestroy {
       renderer: 'canvas',
       options: {
         fpsLimit: 100,
-        edgesAlwaysCurvy: false,
+        edgesAlwaysCurvy: true,
         directedEdges: true,
         backgroundColor: 'black',
-        gravity: 0.01,
+        gravity: 1,
         texts: {
           preventOverlap: false,
+          textWatermark: {
+            fontColor: 'white',
+            fontSize: 48,
+          },
         },
       },
     });
 
-    this.ogma.events.onNodesSelected((evt) => {
-      // this.nodeSelected.emit(evt)
+    this.ogma.events.onNodesSelected((event) => {
+      console.log(event['nodes'].getData('name')[0]);
     });
 
-    this.ogma.styles.addRule({
-      nodeAttributes: {
+    this.ogma.events.onHover((event) => {
+      if (!event.target) return;
+      if (!event.target.isNode) return;
+      console.log(event.target.getData('name'));
+      this.ogma.styles.setHoveredNodeAttributes({
+        outline: true,
+        outerStroke: {
+          color: 'transparent',
+          width: 0,
+        },
         text: {
+          backgroundColor: 'transparent',
           minVisibleSize: 0,
+          color: 'red',
+          scale: 3,
+          // fpsLimit: 100,
           scaling: true,
-          scale: 0.5,
         },
-      },
+      });
     });
   }
 
   renderOntology(source: any) {
-    this.ogma.setGraph(source);
+    // this.ogma.addNodes(source['nodes']);
+    // this.ogma.addEdges(source['edges']);
+    this.ogma.addGraph(source);
     this.ogma.layouts.forceLink({
-      gravity: 0.5,
-      duration: 1000,
-      scalingRatio: 600,
+      gravity: 1,
+      duration: 1200,
+      scalingRatio: 1000,
     });
 
     this.ogma.styles.addRule({
       nodeAttributes: {
-        radius: 16,
-        color: this.ogma.rules.map({
-          field: 'type',
-          values: {
-            location: 'blue',
-            person: 'red',
-            organization: 'green',
-          },
-        }),
-        text: {
-          content: function (node) {
-            return node.getData('name');
-          },
-          color: 'white',
-          margin: 0,
-          // size: 10,
-          scaling: true,
-          scale: 0.5,
-          // position: "center"
-        },
-        innerStroke: {
-          width: 2,
-          // color: "#ddd",
-          color: this.ogma.rules.map({
-            field: 'type',
-            values: {
-              location: 'blue',
-              person: 'red',
-              organization: 'green',
-            },
-          }),
-        },
-      },
-    });
-
-    // set image
-    this.nodeImage();
-
-    // this.forceLink();
-  }
-
-  nodeImage() {
-    this.ogma.getNodes().forEach((node) => {
-      let url = '/assets/img/default.png';
-
-      this.runTestImage(node.getData('type'), node.getData('name'))
-        .then((image) => {
-          if (image) {
-            url = image['src'];
-          }
-
-          this.setImageToNode(url, node);
-        })
-        .catch(() => {
-          this.setImageToNode(url, node);
-        });
-    });
-  }
-
-  setImageToNode(url: string, node?): any {
-    this.ogma.styles.addRule({
-      nodeSelector: (xnode) => {
-        if (node) {
-          return xnode.getId() == node.getId();
-        }
-        return null;
-      },
-      nodeAttributes: {
-        image: {
-          minVisibleSize: 0,
-          url: url,
-        },
+        text: (node) => node.getAttributes()['text'],
+        // text: {
+        //   content: (node) => node.getData('name'),
+        //   color: (node) =>
+        //     node.getData('type') === 'country' ? 'yellow' : 'white',
+        //   scaling: true,
+        //   scale: 1.5,
+        //   minVisibleSize: 0,
+        //   backgroundColor: 'transparent',
+        // },
       },
     });
   }
 
-  mapAssetUrl(type: string, item: string) {
-    let name = item.replace(/ /g, '+');
-    let url: string = `/cdn/${type}/${name}.jpg`;
-
-    if (type == 'organization') {
-      url = `/cdn/organisasi/${name}.jpg`;
+  handleZoomOut() {
+    if (this.zoom > 4) {
+      this.zoom += 1;
+      this.ogma.view.zoomOut({ duration: 200 });
+      console.log(this.zoom);
     }
-
-    return url;
+    {
+      this.zoom = 1;
+      this.ogma.view.zoomOut({ duration: 200 });
+    }
   }
 
-  imageAvailableOrNot(url: string): Promise<any> {
-    const imgElement = new Image();
-    const imgPromise = new Promise((resolve, reject) => {
-      imgElement.addEventListener('load', () => {
-        resolve(imgElement);
-      });
-
-      imgElement.addEventListener('error', () => reject());
-    });
-    imgElement.src = url;
-    return imgPromise;
+  handleZoomIn() {
+    if (this.zoom > 4) {
+      this.zoom += 1;
+      this.ogma.view.zoomIn({ duration: 200 });
+      console.log(this.zoom);
+    }
+    {
+      this.zoom = 1;
+      this.ogma.view.zoomIn({ duration: 200 });
+    }
   }
 
-  runTestImage(type: string, item: string): Promise<any> {
-    const path = this.mapAssetUrl(type, item);
-    const url = 'http://' + window.location.host + path;
+  handleZoomChange() {
+    this.ogma.view.setZoom(this.zoom, { duration: 200, easing: 'linear' });
+  }
 
-    return this.imageAvailableOrNot(url);
+  handleRotateLeft() {
+    this.ogma.view.rotate(1.5, { easing: 'linear', duration: 1000 });
+  }
+
+  handleRotateRight() {
+    this.ogma.view.rotate(-1.5, { easing: 'linear', duration: 1000 });
   }
 
   ngOnDestroy() {
     if (this.fetchSubscription) this.fetchSubscription.unsubscribe();
+    this.ogma.clearGraph();
     this.wsocket.stopWebSocket();
   }
 }

@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   constructor(private account: AccountService, private route: Router) {}
 
   ngOnInit(): void {
-    console.log(this.accountData);
+    // console.log(this.accountData);
     if (window.localStorage.getItem('account')) {
       this.route.navigate(['dashboard']);
     }
