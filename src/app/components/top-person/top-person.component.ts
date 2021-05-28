@@ -59,8 +59,10 @@ export class TopPersonComponent implements OnInit, OnDestroy {
           this.ontology = this.ontology.concat(res['nodes']);
           this.nodesArray = this.nodesArray.concat(res['nodes']);
           this.edgesArray = this.edgesArray.concat(res['edges']);
-          this.nodesLength = this.nodesArray.length;
-          this.edgesLength = this.edgesArray.length;
+          this.nodesLength = this.nodesArray.map((e) => e.data.username).length;
+          this.edgesLength = this.edgesArray.map(
+            (e) => e.data.edges_kind
+          ).length;
           this.renderOntology(res);
         }
       } else if (res['status'] === 'list_id') {
@@ -98,10 +100,6 @@ export class TopPersonComponent implements OnInit, OnDestroy {
         gravity: 1,
         texts: {
           preventOverlap: false,
-          textWatermark: {
-            fontColor: 'white',
-            fontSize: 48,
-          },
         },
       },
     });
@@ -109,7 +107,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
     this.ogma.events.onClick((e) => {
       if (!e.target) return;
       const data = e.target;
-      if (data.isNode) {
+      if (!!data.isNode) {
         this.popUp = true;
       } else {
         return;
@@ -141,7 +139,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
           backgroundColor: 'transparent',
           minVisibleSize: 0,
           color: 'yellow',
-          scale: 3,
+          scale: 2,
           scaling: true,
         },
       });
@@ -156,7 +154,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
     this.ogma.layouts.forceLink({
       gravity: 1,
       duration: 1200,
-      scalingRatio: 1000,
+      scalingRatio: 100,
     });
   }
 
@@ -164,7 +162,6 @@ export class TopPersonComponent implements OnInit, OnDestroy {
     if (this.zoom > 4) {
       this.zoom += 1;
       this.ogma.view.zoomOut({ duration: 200 });
-      console.log(this.zoom);
     }
     {
       this.zoom = 1;
@@ -176,7 +173,6 @@ export class TopPersonComponent implements OnInit, OnDestroy {
     if (this.zoom > 4) {
       this.zoom += 1;
       this.ogma.view.zoomIn({ duration: 200 });
-      console.log(this.zoom);
     }
     {
       this.zoom = 1;
@@ -243,8 +239,8 @@ export class TopPersonComponent implements OnInit, OnDestroy {
 
     this.isNotHashtag = true;
 
-    this.nodesLength = this.nodesArray.length;
-    this.edgesLength = this.edgesArray.length;
+    this.nodesLength = this.nodesArray.map((e) => e['username']).length;
+    this.edgesLength = this.edgesArray.map((e) => e['edges_kind']).length;
   }
 
   // handle for search Username
