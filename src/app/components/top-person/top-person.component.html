@@ -10,6 +10,59 @@
     padding: 15px;
     /* filter: blur(8px); */
     background-color: rgba(240, 248, 255, 0.956);
+    border-radius: 10px;
+  }
+
+  .filterPanel {
+    display: inline-block;
+    margin-left: 10px;
+  }
+
+  .counter {
+    position: absolute;
+    z-index: 99;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgba(132, 132, 132, 0.62);
+    transform: translate(40px, -600px);
+  }
+  .console {
+    height: 150px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: rgba(132, 132, 132, 0.62);
+    padding: 5px;
+    border-radius: 999px;
+    position: absolute;
+    transform: translate(900px, -600px);
+    z-index: 99;
+  }
+
+  .arrow {
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .arrow:hover {
+    color: yellow;
+  }
+
+  .console-center {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .console-bottom {
+    margin-top: -5px;
   }
 </style>
 
@@ -30,15 +83,11 @@
     {{ username["username"] }}
   </option>
 </datalist>
-
-<input
-  (change)="handleZoomChange()"
-  type="range"
-  min="0"
-  max="5"
-  defaultValue="0"
-  [(ngModel)]="zoom"
-/>
+<div class="filterPanel">
+  <button alt="Search All" (click)="handleResetFilter($event)">All</button>
+  <button alt="Search Username" (click)="handleFilterUser($event)">@</button>
+  <button alt="Search Hashtag" (click)="handleFilterHastagh($event)">#</button>
+</div>
 <div class="w-full">
   <div id="container-ogma" style="height: 90vh">
     <ng-container *ngIf="ontology; else loading"></ng-container>
@@ -72,4 +121,24 @@
   <h4 *ngIf="isCountry">Currency: {{ currency }}</h4> -->
 
   <button (click)="detailToogle()">close</button>
+</div>
+
+<div class="counter">
+  <h4>Nodes: {{ nodesLength }}</h4>
+  <h4 *ngIf="isNotHashtag">Edges: {{ edgesLength }}</h4>
+</div>
+
+<div class="console">
+  <div class="console-top">
+    <div class="arrow" (click)="handleArrow('top')">&#8593;</div>
+  </div>
+
+  <div class="console-center">
+    <div class="arrow" (click)="handleArrow('left')">&#8592;</div>
+    <div class="arrow" (click)="handleArrow('center')">&#9673;</div>
+    <div class="arrow" (click)="handleArrow('right')">&#8594;</div>
+  </div>
+  <div class="console-bottom">
+    <div class="arrow" (click)="handleArrow('bottom')">&#8595;</div>
+  </div>
 </div>

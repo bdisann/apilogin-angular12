@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy, OnChanges {
   dataGraph: any = [];
 
   constructor(private route: Router, as: AccountService, wSc: WsService) {
-    if (!window.localStorage.getItem('account')) route.navigate(['login']);
+    if (!!!window.localStorage.getItem('account')) route.navigate(['/']);
   }
 
   ngOnInit(): void {
@@ -39,6 +39,4 @@ export class DashboardComponent implements OnInit, OnDestroy, OnChanges {
     window.localStorage.clear();
     this.route.navigate(['/']);
   }
-
-  handleSocket() {}
 }

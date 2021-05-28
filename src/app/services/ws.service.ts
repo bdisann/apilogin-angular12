@@ -20,5 +20,6 @@ export class WsService {
 
   stopWebSocket() {
     this.ws.complete();
+    this.ws.unsubscribe();
   }
 }
