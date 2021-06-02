@@ -1,8 +1,17 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { WsService } from 'src/app/services/ws.service';
+import { InfoService } from 'src/app/services/info.service';
+import INFO_INTERFACE from 'src/app/models/infoInterface';
 declare const Ogma: any;
 
 @Component({
@@ -10,7 +19,8 @@ declare const Ogma: any;
   templateUrl: './top-person.component.html',
   styleUrls: ['./top-person.component.scss'],
 })
-export class TopPersonComponent implements OnInit, OnDestroy {
+export class TopPersonComponent implements OnInit, OnDestroy, OnChanges {
+  // graph inilialization
   ogma: any;
   ontology: any[] = [];
   nodesArray: any[] = [];
@@ -21,7 +31,6 @@ export class TopPersonComponent implements OnInit, OnDestroy {
   name: string;
   population: string;
   currency: string;
-  popUp: boolean = false;
   clientX: any;
   clientY: any;
   search: string;
@@ -31,6 +40,20 @@ export class TopPersonComponent implements OnInit, OnDestroy {
   nodesFilter: any = null;
   edgesFilter: any = null;
   isNotHashtag: boolean;
+  // info Popup
+  popUp: boolean = false;
+  contentInfo: any[] = [];
+  timeInfo: string;
+  getInfo: any;
+  sortLikes: boolean = false;
+  sortShares: boolean = false;
+  sortEngagements: boolean = false;
+  sortComments: boolean = false;
+  likes = 'likes';
+  comments = 'comments';
+  shares = 'shares';
+  engagements = 'engagements';
+  messageApi: INFO_INTERFACE;
   coordinate = {
     x: 0,
     y: 0,
@@ -46,7 +69,11 @@ export class TopPersonComponent implements OnInit, OnDestroy {
   };
   private fetchSubscription: Subscription;
 
-  constructor(private http: HttpClient, private wsocket: WsService) {}
+  constructor(
+    private http: HttpClient,
+    private wsocket: WsService,
+    private info: InfoService
+  ) {}
 
   ngOnInit() {
     this.graphInit();
@@ -69,6 +96,12 @@ export class TopPersonComponent implements OnInit, OnDestroy {
         this.usernames = this.usernames.concat(res['list_id']);
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.contentInfo && changes.contentInfo.currentValue) {
+      console.log(this.contentInfo);
+    }
   }
 
   getOntology() {
@@ -112,6 +145,7 @@ export class TopPersonComponent implements OnInit, OnDestroy {
       } else {
         return;
       }
+      this.contentInfo = null;
       this.clientX = e.domEvent.clientX;
       this.clientY = e.domEvent.clientY;
       this.type = data.getData('type');
@@ -120,6 +154,26 @@ export class TopPersonComponent implements OnInit, OnDestroy {
         .split('')
         .filter((e) => e !== '@')
         .join('');
+
+      console.log(this.nameUrl);
+      this.messageApi = {
+        acces_token:
+          '86120884ae4b272458ab430724f32da238a6256c7f5b772b0989f885a9e483dc',
+        query: this.nameUrl,
+        platform: 'twitter',
+        size: 10,
+        analisis: 'topic-overall',
+        sortBy: 'likes_count',
+        order: 'desc',
+        page: 1,
+      };
+      // console.log(message);
+      this.getInfo = this.info
+        .getNodePostByName(this.messageApi)
+        .subscribe((res) => {
+          this.timeInfo = new Date(res.timestamp).toString();
+          this.contentInfo = [...res.data.content];
+        });
     });
 
     // this.ogma.events.onNodesSelected((event) => {
@@ -336,6 +390,41 @@ export class TopPersonComponent implements OnInit, OnDestroy {
     }
   }
 
+  sortPost(e, status) {
+    e.preventDefault();
+    this.contentInfo = null;
+    switch (status) {
+      case 'likes':
+        this.messageApi = {
+          ...this.messageApi,
+          sortBy: 'likes_count',
+          order: this.messageApi.order === 'desc' ? 'asc' : 'desc',
+        };
+        this.getInfo = this.info
+          .getNodePostByName(this.messageApi)
+          .subscribe((res) => {
+            this.timeInfo = new Date(res.timestamp).toString();
+            this.contentInfo = [...res.data.content];
+          });
+        break;
+      case 'shares':
+        this.messageApi = {
+          ...this.messageApi,
+          sortBy: 'shares_count',
+          order: this.messageApi.order === 'desc' ? 'asc' : 'desc',
+        };
+        this.getInfo = this.info
+          .getNodePostByName(this.messageApi)
+          .subscribe((res) => {
+            this.timeInfo = new Date(res.timestamp).toString();
+            this.contentInfo = [...res.data.content];
+          });
+        break;
+      default:
+        break;
+    }
+  }
+
   detailToogle() {
     return (this.popUp = !this.popUp);
   }
@@ -343,7 +432,8 @@ export class TopPersonComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.fetchSubscription) this.fetchSubscription.unsubscribe();
     if (!!this.ogma) this.ogma.clearGraph();
-    this.wsocket.stopWebSocket();
+    if (!!this.getInfo) this.getInfo.unsubscribe();
+    if (!!this.wsocket) this.wsocket.stopWebSocket();
   }
 }
 

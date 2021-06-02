@@ -1,0 +1,71 @@
+<style>
+  .item-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .item-content-header {
+    display: flex;
+    /* flex-direction: column; */
+    margin-bottom: 5px;
+  }
+
+  .item-content-header-top {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex: 0.5;
+  }
+
+  .item-content-header-top > img {
+    height: 40px;
+    width: 40px;
+    margin-right: 10px;
+    border-radius: 999px;
+  }
+  .item-content-header-bottom {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex: 0.5;
+  }
+</style>
+
+<div class="item-content">
+  <div class="item-content-header">
+    <div class="item-content-header-top">
+      <img [src]="item.user_image" [alt]="item.user_name" />
+      <h4>{{ item.user_name }}</h4>
+    </div>
+    <div class="item-content-header-bottom">
+      <!-- <p>{{new Date(item.timestamp).toString()}}</p> -->
+      <p>
+        {{ item.sentiment }}
+      </p>
+    </div>
+  </div>
+  <div class="item-content-body">
+    <h4>{{ item.text }}</h4>
+  </div>
+  <hr />
+  <div class="item-content-footer">
+    <div class="panels">
+      <div class="info-panels">
+        <p>Type: {{ item.type }}</p>
+      </div>
+      <div class="info-panels">
+        <p>Engagements: {{ item.engagements }}</p>
+      </div>
+      <div class="info-panels">
+        <p>Comments: {{ item.comments_count }}</p>
+      </div>
+      <div class="info-panels">
+        <p>Shares: {{ item.shares_count }}</p>
+      </div>
+      <div class="info-panels">
+        <p>Likes: {{ item.likes_count }}</p>
+      </div>
+    </div>
+  </div>
+</div>

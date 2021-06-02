@@ -9,5 +9,16 @@
       "^/api/v1/apps": ""
     },
     "changeOrigin": true
+  },
+  "/api/graph/statistics": {
+    "target": "http://192.168.20.85:9010",
+    "docs": "http://192.168.20.85:9010/v2/api-docs",
+    "description": "DUMMY",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/graph/statistics": ""
+    },
+    "changeOrigin": true
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import ACCOUNT_INTERFACE from '../data/accountInterface';
+import ACCOUNT_INTERFACE from '../models/accountInterface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({

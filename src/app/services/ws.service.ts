@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, pipe, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { webSocket } from 'rxjs/webSocket';
 
 @Injectable({

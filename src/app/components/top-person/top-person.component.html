@@ -1,18 +1,167 @@
 <style>
+  #container-ogma {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh !important;
+  }
+  .panel-buttons {
+    z-index: 99;
+    width: 100vw;
+    position: relative;
+    margin: 0px auto;
+    top: 0;
+    /* border: red solid 1px; */
+    padding: 20px;
+  }
+  .btn-item {
+    margin-right: 10px;
+  }
+
+  .counter {
+    z-index: 99;
+    position: absolute;
+    left: 30px;
+  }
+
+  .counter > h4 {
+    font-size: 15px;
+  }
+
+  .console {
+    z-index: 100;
+    position: absolute;
+    top: 80;
+    right: 30px;
+    cursor: pointer;
+  }
+  .arrow:hover {
+    color: yellow !important;
+  }
+</style>
+
+<div class="panel-buttons row">
+  <div class="col">
+    <button class="btn-item btn btn-outline-danger" (click)="handleZoomOut()">
+      Zoom Out
+    </button>
+    <button class="btn-item btn btn-outline-danger" (click)="handleZoomIn()">
+      Zoom In
+    </button>
+    <button
+      class="btn-item btn btn-outline-danger"
+      (click)="handleRotateLeft()"
+    >
+      Rotate Left
+    </button>
+    <button
+      class="btn-item btn btn-outline-danger"
+      (click)="handleRotateRight()"
+    >
+      Rotate Right
+    </button>
+    <button
+      class="btn-item btn btn-outline-danger"
+      alt="Search All"
+      (click)="handleResetFilter($event)"
+    >
+      All
+    </button>
+    <button
+      class="btn-item btn btn-outline-danger"
+      alt="Search Username"
+      (click)="handleFilterUser($event)"
+    >
+      @
+    </button>
+    <button
+      class="btn-item btn btn-outline-danger"
+      alt="Search Hashtag"
+      (click)="handleFilterHastagh($event)"
+    >
+      #
+    </button>
+  </div>
+  <div class="col">
+    <div class="form-group">
+      <div class="input-group">
+        <input
+          placeholder="Search Username.."
+          class="search form-control"
+          type="text"
+          list="usernamelist"
+          [(ngModel)]="search"
+        />
+        <button class="btn btn-outline-danger" (click)="handleSearch($event)">
+          Search Now
+        </button>
+        <datalist id="usernamelist">
+          <option
+            value="{{ username['username'] }}"
+            *ngFor="let username of usernames"
+          >
+            {{ username["username"] }}
+          </option>
+        </datalist>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="counter">
+  <h4 class="text-white">Nodes: {{ nodesLength }}</h4>
+  <h4 class="text-white" *ngIf="isNotHashtag">Edges: {{ edgesLength }}</h4>
+</div>
+
+<div class="console">
+  <div class="console-top">
+    <div class="arrow text-white" (click)="handleArrow('top')">&#8593;</div>
+  </div>
+
+  <div class="console-center">
+    <div class="arrow text-white" (click)="handleArrow('left')">&#8592;</div>
+    <div class="arrow text-white" (click)="handleArrow('center')">&#9673;</div>
+    <div class="arrow text-white" (click)="handleArrow('right')">&#8594;</div>
+  </div>
+  <div class="console-bottom">
+    <div class="arrow text-white" (click)="handleArrow('bottom')">&#8595;</div>
+  </div>
+</div>
+
+<div class="top-person">
+  <div id="container-ogma" style="height: 90vh">
+    <ng-container *ngIf="ontology; else loading"></ng-container>
+  </div>
+</div>
+
+<!-- LEGACY -->
+
+<!--<style>
   .popup-data {
     position: absolute;
-    z-index: 99;
-    height: 200px;
-    width: 200px;
+    z-index: 999;
+    transform: translate(280px, -500px);
+    height: 450px;
+    width: 500px;
+    overflow: scroll;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    padding: 15px;
+    justify-content: flex-start;
     /* filter: blur(8px); */
     background-color: rgba(240, 248, 255, 0.956);
     border-radius: 10px;
   }
-
+  .popup-data-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: lightgray;
+    padding: 20px;
+    display: flex;
+  }
   .filterPanel {
     display: inline-block;
     margin-left: 10px;
@@ -64,12 +213,16 @@
   .console-bottom {
     margin-top: -5px;
   }
+
+  ng-template {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
 </style>
 
-<button (click)="handleZoomOut()">Zoom Out</button>
-<button (click)="handleZoomIn()">Zoom In</button>
-<button (click)="handleRotateLeft()">Rotate Left</button>
-<button (click)="handleRotateRight()">Rotate Right</button>
+
 <input
   placeholder="Search Username.."
   class="search"
@@ -84,61 +237,96 @@
   </option>
 </datalist>
 <div class="filterPanel">
-  <button alt="Search All" (click)="handleResetFilter($event)">All</button>
-  <button alt="Search Username" (click)="handleFilterUser($event)">@</button>
-  <button alt="Search Hashtag" (click)="handleFilterHastagh($event)">#</button>
+  
 </div>
 <div class="w-full">
-  <div id="container-ogma" style="height: 90vh">
-    <ng-container *ngIf="ontology; else loading"></ng-container>
-  </div>
 
   <!-- loading -->
-  <ng-template #loading>
-    <div class="not-available">
-      <div class="lds-facebook">
-        <div></div>
-        <div></div>
-        <div></div>
+<!-- 
+
+  <div class="popup-data" *ngIf="popUp">
+    <div class="popup-data-header">
+      <div class="popup-data-header-head">
+        <h3>Detail Info</h3>
+        <h5 *ngIf="!!timeInfo">{{ timeInfo }}</h5>
       </div>
-    </div>
-  </ng-template>
-</div>
+      <div *ngIf="contentInfo" class="popup-button">
+        <p>Sort By:</p>
+        <button (click)="sortPost($event, likes)">Likes</button>
+        <!-- <button (click)="sortPost($event, comments)" disabled>Comments</button>
+        <button (click)="sortPost($event, engagements)" disabled>
+          Engagements
+        </button> -->
+<!-- 
 
-<div
-  [ngStyle]="{ top: clientY + -200 + 'px', left: clientX + 20 + 'px' }"
-  class="popup-data"
-  *ngIf="popUp"
->
-  <h1>Data Detail</h1>
-  <!-- <h4>Type: {{ type }}</h4> -->
+          <button (click)="sortPost($event, shares)">Shares</button>
+        </div>
+      </div>
+      <div class="content-info">
+        <div *ngIf="contentInfo; else isloading">
+          <app-item-content
+            [item]="item"
+            *ngFor="let item of contentInfo"
+          ></app-item-content>
+        </div>
+      </div>
+         -->
 
-  <h4>
+<!-- LEGACY!!! -->
+<!-- <h4>Type: {{ type }}</h4> -->
+
+<!-- <h4>
     username:
     <a target="_blank" href="https://twitter.com/{{ nameUrl }}">{{ name }}</a>
-  </h4>
-  <!-- <h4 *ngIf="isCountry">Population: {{ population }}</h4>
+  </h4> -->
+<!-- <h4 *ngIf="isCountry">Population: {{ population }}</h4>
   <h4 *ngIf="isCountry">Currency: {{ currency }}</h4> -->
-
+<!-- 
   <button (click)="detailToogle()">close</button>
-</div>
+</div> -->
+<!-- 
 
-<div class="counter">
-  <h4>Nodes: {{ nodesLength }}</h4>
-  <h4 *ngIf="isNotHashtag">Edges: {{ edgesLength }}</h4>
-</div>
-
-<div class="console">
-  <div class="console-top">
-    <div class="arrow" (click)="handleArrow('top')">&#8593;</div>
+  <div class="counter">
+    <h4>Nodes: {{ nodesLength }}</h4>
+    <h4 *ngIf="isNotHashtag">Edges: {{ edgesLength }}</h4>
   </div>
 
-  <div class="console-center">
-    <div class="arrow" (click)="handleArrow('left')">&#8592;</div>
-    <div class="arrow" (click)="handleArrow('center')">&#9673;</div>
-    <div class="arrow" (click)="handleArrow('right')">&#8594;</div>
+ -->
+<!-- 
+
+  <div class="console">
+    <div class="console-top">
+      <div class="arrow" (click)="handleArrow('top')">&#8593;</div>
+    </div>
+  
+    <div class="console-center">
+      <div class="arrow" (click)="handleArrow('left')">&#8592;</div>
+      <div class="arrow" (click)="handleArrow('center')">&#9673;</div>
+      <div class="arrow" (click)="handleArrow('right')">&#8594;</div>
+    </div>
+    <div class="console-bottom">
+      <div class="arrow" (click)="handleArrow('bottom')">&#8595;</div>
+    </div>
   </div>
-  <div class="console-bottom">
-    <div class="arrow" (click)="handleArrow('bottom')">&#8595;</div>
+
+ -->
+<!-- 
+
+  <ng-template #isloading>
+    <div class="isloading">
+      <h1>Is Loading...</h1>
+    </div>
+  </ng-template>
+
+ -->
+
+<!-- modals -->
+<ng-template #loading>
+  <div class="not-available">
+    <div class="lds-facebook">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
   </div>
-</div>
+</ng-template>

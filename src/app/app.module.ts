@@ -8,6 +8,7 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 import { TopPersonComponent } from './components/top-person/top-person.component';
+import { ItemContentComponent } from './components/item-content/item-content.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { TopPersonComponent } from './components/top-person/top-person.component
     LoginComponent,
     DashboardComponent,
     TopPersonComponent,
+    ItemContentComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [],

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import ACCOUNT_INTERFACE from 'src/app/data/accountInterface';
+import ACCOUNT_INTERFACE from 'src/app/models/accountInterface';
 import { AccountService } from 'src/app/services/account.service';
 import { Router } from '@angular/router';
 @Component({

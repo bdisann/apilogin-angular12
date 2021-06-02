@@ -1,7 +1,74 @@
-<div class="container">
-  <h1>Halo {{ dataAccount.account_fullname }}</h1>
-  <div class="button">
-    <button (click)="handleLogout()">Logout</button>
+<style>
+  .header {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: rgba(0, 0, 0, 0.62);
+    border-top: cadetblue 2px solid;
+    width: 100vw;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    border-radius: 10px;
+    z-index: 99;
+  }
+
+  .header h2 {
+    font-size: 25px;
+    padding: 25px;
+    border: cadetblue 2px solid;
+    border-radius: 10px;
+    margin-right: -300px;
+  }
+  /*
+  .btn-arrow {
+    padding: 20px;
+    border: cadetblue 2px solid;
+    background-color: transparent;
+    color: white;
+    font-weight: bolder;
+    font-size: 25px;
+    border-radius: 10px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    bottom: 140px;
+    transform: translate(230px, 0);
+    cursor: pointer;
+  }
+
+  .btn-arrow:hover {
+    border: rgb(57, 95, 96) 2px solid;
+  } */
+</style>
+
+<div class="dashboard">
+  <div class="row justify-content-md-center">
+    <!-- <div class="col-lg-6">
+      <button class="btn-arrow">&#8681;</button>
+    </div> -->
+    <div class="header col-lg-6">
+      <h2 class="display-3 text-white">
+        Selamat datang {{ dataAccount.account_fullname }}
+      </h2>
+      <button class="btn btn-danger" (click)="handleLogout()">Logout</button>
+    </div>
+  </div>
+  <app-top-person></app-top-person>
+</div>
+
+<!-- <div class="dashboard"></div>
+<div class="dashboard-content">
+  <div class="header">
+    <h1 class="text-white text-center">
+      Halo {{ dataAccount.account_fullname }}
+    </h1>
+  </div>
+
+  <div class="content m-6">
+    <button class="btn btn-danger" (click)="handleLogout()">Logout</button>
     <app-top-person></app-top-person>
   </div>
-</div>
+</div> -->
